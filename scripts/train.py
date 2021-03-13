@@ -106,6 +106,8 @@ def parse_args():
     ###AAAAA网盘保存路径
     parser.add_argument('--dirtang', type=str, default=None,
                         help='input the dir of train info ')
+    parser.add_argument('--pretraintang', action='store_true', default=False,  ##使用预训练网络
+                        help='if restore training ')  
     
     args = parser.parse_args()
 
@@ -175,7 +177,7 @@ class Trainer(object):
         # create network  初始化网络
         BatchNorm2d = nn.SyncBatchNorm if args.distributed else nn.BatchNorm2d
         self.model = get_segmentation_model(model=args.model, dataset=args.dataset, backbone=args.backbone,
-                                            aux=args.aux, jpu=args.jpu, norm_layer=BatchNorm2d).to(self.device)
+                                            aux=args.aux,  pretrained=args.pretraintang,jpu=args.jpu, norm_layer=BatchNorm2d).to(self.device)
         
         # resume checkpoint if needed
         if args.resume:
